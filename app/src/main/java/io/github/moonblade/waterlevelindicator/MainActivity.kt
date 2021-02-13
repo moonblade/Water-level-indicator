@@ -1,5 +1,7 @@
 package io.github.moonblade.waterlevelindicator
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private var lastUpdate: TextView? = null
     private var distance: TextView? = null
     private var percentageText: TextView? = null
-    private lateinit var measurement: Measurement;
+    private var measurement: Measurement? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +60,12 @@ class MainActivity : AppCompatActivity() {
         distance?.setText(measurement?.distanceString)
         percentageText?.setText(measurement?.percentageString)
         measurement?.percentage?.toInt()?.let { percentageProgress?.setProgress(it) };
+
+        val man = AppWidgetManager.getInstance(this)
+        val ids = man.getAppWidgetIds(ComponentName(this, NewAppWidget::class.java))
+        val updateIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        sendBroadcast(updateIntent)
     }
 
     private fun initialize() {
@@ -65,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         distance = findViewById<TextView>(R.id.distance)
         percentageText = findViewById<TextView>(R.id.percentageText)
         percentageProgress = findViewById<ProgressBar>(R.id.percentage)
-        measurement = Measurement()
+        measurement = Measurement.instance()!!
         setValues()
     }
 

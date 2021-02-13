@@ -1,23 +1,31 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/appWidgetBackgroundColor"
+    android:orientation="vertical"
+    android:background="#506365"
     android:padding="@dimen/widget_margin"
     android:theme="@style/ThemeOverlay.WaterLevelIndicator.AppWidgetContainer">
 
-    <ProgressBar
-        android:id="@+id/measurement"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="2dp"
-        android:progress="50"
-        android:rotation="270"
-        android:scaleX="4"
-        android:scaleY="80"></ProgressBar>
 
-</RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/widgetText"
+        android:text=""
+        />
+
+    <ProgressBar
+        android:id="@+id/widgetProgress"
+        style="@style/MyProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="50"
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:scaleX="4"
+        android:scaleY="80"
+        android:rotation="270"
+        ></ProgressBar>
+
+
+</LinearLayout>

@@ -1,27 +1,31 @@
 package io.github.moonblade.waterlevelindicator
 
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
 import android.util.Log
-import android.widget.EditText
 import android.widget.RemoteViews
-import android.widget.TextView
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
+import io.github.moonblade.waterlevelindicator.Measurement.Measurement
+import io.github.moonblade.waterlevelindicator.Settings.ChangeListener
+import io.github.moonblade.waterlevelindicator.Settings.SettingsActivity
 
 /**
  * Implementation of App Widget functionality.
  */
 class NewAppWidget : AppWidgetProvider() {
+    var measurement: Measurement? = null
+    lateinit var appWidgetManager: AppWidgetManager
+    var appWidgetId: Int = 0
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            measurement = Measurement.instance()
+            this.appWidgetId = appWidgetId
+            this.appWidgetManager = appWidgetManager
+            updateAppWidget(context, appWidgetManager, appWidgetId, measurement)
         }
     }
 
@@ -32,39 +36,37 @@ class NewAppWidget : AppWidgetProvider() {
     override fun onDisabled(context: Context) {
         // Enter relevant functionality for when the last widget is disabled
     }
-}
 
-internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-    // Construct the RemoteViews object
-    val views = RemoteViews(context.packageName, R.layout.new_app_widget)
+    fun setValues(views: RemoteViews, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        Log.d("Widget", measurement?.widgetText)
+        views.setTextViewText(R.id.widgetText, measurement?.widgetText)
+        views.setProgressBar(R.id.widgetProgress, 100, measurement?.percentage?.toInt()!!, false)
+        appWidgetManager.updateAppWidget(appWidgetId, views)
+    }
 
-    val database = Firebase.database
-    val reference = database.getReference("waterlevel")
-
-    val sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-    val minValue = sharedPref.getInt("minValue", 0)
-    val maxValue = sharedPref.getInt("maxValue", 100)
-    val autoUpdate = sharedPref.getBoolean("autoUpdate", true)
-//    Log.d("waterLevel", "Updating app widget")
-
-    reference.addValueEventListener(object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            // This method is called once with the initial value and again
-            // whenever data at this location is updated.
-            val value = dataSnapshot.getValue<HashMap<String, Long>>()
-//            Log.d("waterLevel", "Value is: $value")
-            val measurement = value?.get("measurement")
-            val percentage = 100 - ((measurement?.toInt()!! - minValue) * 100 )/ (maxValue - minValue)
-//            Log.d("waterLevel", "Setting measurement percentage $percentage")
-            views.setProgressBar(R.id.measurement, 100, percentage, false)
-            // Instruct the widget manager to update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, views)
+    fun setListener(views: RemoteViews, context: Context) {
+        val intent = Intent(context, MainActivity::class.java).apply {}
+        val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+            // Add the intent, which inflates the back stack
+            addNextIntentWithParentStack(intent)
+            // Get the PendingIntent containing the entire back stack
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
+        views.setOnClickPendingIntent(R.id.widgetProgress, pendingIntent)
+        views.setOnClickPendingIntent(R.id.widgetText, pendingIntent)
 
-        override fun onCancelled(error: DatabaseError) {
-            // Failed to read value
-//            Log.w("waterLevel", "Failed to read value.", error.toException())
-        }
-    })
+        Log.d("Widget", "Setting listener for widget")
+        measurement?.setWidgetOnChangeListener(object: ChangeListener {
+            override fun changed() {
+                setValues(views, appWidgetManager, appWidgetId)
+            }
+        })
+    }
 
+    fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, measurement: Measurement?) {
+        // Construct the RemoteViews object
+        val views = RemoteViews(context.packageName, R.layout.new_app_widget)
+        setValues(views, appWidgetManager, appWidgetId)
+        setListener(views, context)
+    }
 }
