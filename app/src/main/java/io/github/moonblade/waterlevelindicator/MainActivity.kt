@@ -1,13 +1,15 @@
 package io.github.moonblade.waterlevelindicator
 
 import android.content.Context
-import android.content.SharedPreferences
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.widget.CompoundButton
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -19,6 +21,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import io.github.moonblade.waterlevelindicator.Settings.SettingsActivity
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
@@ -29,9 +32,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val settings = Settings()
-        settings.minimumValue = 35
-        settings.autoUpdateMinMax = true
         val database = Firebase.database
         val reference = database.getReference("waterlevel")
         val text = findViewById<TextView>(R.id.textView)
@@ -151,5 +151,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.main_activity, menu)
+        return true;
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings -> {
+                val intent = Intent(this, SettingsActivity::class.java).apply {}
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
 }

@@ -1,36 +1,44 @@
-package io.github.moonblade.waterlevelindicator
+package io.github.moonblade.waterlevelindicator.Settings
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import io.github.moonblade.waterlevelindicator.DataBase
 
 class Settings {
+    private var listener: SettingsChangeListener? = null
     var minimumValue = 30
     set(value) {
         field = value
-        DataBase.instance()?.updateSettingInt("minimumValue", value)
+        DataBase.instance()
+            ?.updateSettingInt("minimumValue", value)
     }
 
     var maximumValue = 40
     set(value) {
         field = value
-        DataBase.instance()?.updateSettingInt("maximumValue", value)
+        DataBase.instance()
+            ?.updateSettingInt("maximumValue", value)
     }
 
     var autoUpdateMinMax = true
     set(value) {
         field = value
-        DataBase.instance()?.updateSettingInt("autoUpdateMinMax", if(value) 1 else 0)
+        DataBase.instance()
+            ?.updateSettingInt("autoUpdateMinMax", if(value) 1 else 0)
     }
 
     var anomalyDistanceLimit = 20
     set(value) {
         field = value
-        DataBase.instance()?.updateSettingInt("anomalyDistanceLimit", value)
+        DataBase.instance()
+            ?.updateSettingInt("anomalyDistanceLimit", value)
     }
 
     fun updateFields(hashMap: HashMap<String, Int>) {
+        Log.d("waterLevel", "Settings: " + hashMap.toString())
         val _minimumValue = hashMap?.get("minimumValue")
         if (_minimumValue != null && _minimumValue != minimumValue) {
             minimumValue = _minimumValue
@@ -51,6 +59,8 @@ class Settings {
         if (_anomalyDistanceLimit != null && _anomalyDistanceLimit != anomalyDistanceLimit) {
             anomalyDistanceLimit = _anomalyDistanceLimit
         }
+
+        listener!!.settingsChanged()
     }
 
     init {
@@ -65,5 +75,9 @@ class Settings {
             }
 
         })
+    }
+
+    public fun setOnChangeListener(listener: SettingsChangeListener) {
+        this.listener = listener
     }
 }

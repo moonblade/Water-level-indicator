@@ -9,10 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WaterLevelIndicator">
-        <activity
-            android:name=".Configuration"
-            android:label="@string/title_activity_configuration"></activity>
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".Settings.SettingsActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
