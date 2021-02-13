@@ -6,39 +6,17 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import io.github.moonblade.waterlevelindicator.DataBase
+import kotlin.math.abs
 
 class Settings {
-    private var listener: SettingsChangeListener? = null
-    var minimumValue = 30
-    set(value) {
-        field = value
-        DataBase.instance()
-            ?.updateSettingInt("minimumValue", value)
-    }
-
-    var maximumValue = 40
-    set(value) {
-        field = value
-        DataBase.instance()
-            ?.updateSettingInt("maximumValue", value)
-    }
-
-    var autoUpdateMinMax = true
-    set(value) {
-        field = value
-        DataBase.instance()
-            ?.updateSettingInt("autoUpdateMinMax", if(value) 1 else 0)
-    }
-
+    private var listener: ChangeListener? = null
     var anomalyDistanceLimit = 20
-    set(value) {
-        field = value
-        DataBase.instance()
-            ?.updateSettingInt("anomalyDistanceLimit", value)
-    }
+    var minimumValue = -1
+    var maximumValue = -1
+    var autoUpdateMinMax = true
 
     fun updateFields(hashMap: HashMap<String, Int>) {
-        Log.d("waterLevel", "Settings: " + hashMap.toString())
+        Log.d("Settings", "Updating settings: $hashMap")
         val _minimumValue = hashMap?.get("minimumValue")
         if (_minimumValue != null && _minimumValue != minimumValue) {
             minimumValue = _minimumValue
@@ -60,10 +38,13 @@ class Settings {
             anomalyDistanceLimit = _anomalyDistanceLimit
         }
 
-        listener!!.settingsChanged()
+        if (listener != null) {
+            listener!!.changed()
+        }
     }
 
-    init {
+    constructor() {
+        Log.d("Settings", "Initializing settings")
         DataBase.instance()?.reference?.child("settings")?.addValueEventListener(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
@@ -77,7 +58,26 @@ class Settings {
         })
     }
 
-    public fun setOnChangeListener(listener: SettingsChangeListener) {
+    public fun setOnChangeListener(listener: ChangeListener) {
         this.listener = listener
+    }
+
+    fun updateMinMax(value: Int) {
+        if (autoUpdateMinMax) {
+            if (value < minimumValue && abs(value - minimumValue) < anomalyDistanceLimit)
+                minimumValue = value
+            if (value > maximumValue && abs(value - maximumValue) < anomalyDistanceLimit)
+                maximumValue = value
+            if (minimumValue != -1 && maximumValue != -1)
+                pushValues()
+        }
+
+    }
+
+    fun pushValues() {
+        DataBase.instance()?.updateSettingInt("autoUpdateMinMax", if(autoUpdateMinMax) 1 else 0)
+        DataBase.instance()?.updateSettingInt("maximumValue", maximumValue)
+        DataBase.instance()?.updateSettingInt("minimumValue", minimumValue)
+        DataBase.instance()?.updateSettingInt("anomalyDistanceLimit", anomalyDistanceLimit)
     }
 }

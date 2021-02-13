@@ -8,10 +8,10 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/lastUpdate"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Last updated: "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,10 +20,10 @@
         app:layout_constraintVertical_bias="0.154" />
 
     <TextView
-        android:id="@+id/lastUpdate"
-        android:layout_width="wrap_content"
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Distance to water:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -31,30 +31,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.154" />
 
-    <EditText
-        android:id="@+id/minValue"
-        android:layout_width="195dp"
-        android:layout_height="72dp"
-        android:visibility="gone"
-        android:hint="minimum value"
-        tools:layout_editor_absoluteX="108dp"
-        tools:layout_editor_absoluteY="177dp" />
-
-    <EditText
-        android:id="@+id/maxValue"
-        android:layout_width="195dp"
-        android:layout_height="72dp"
-        android:hint="maximum value"
-        android:visibility="gone"
-        tools:layout_editor_absoluteX="108dp"
-        tools:layout_editor_absoluteY="304dp" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:layout_width="wrap_content"
-        android:id="@+id/autoUpdateToggle"
-        android:visibility="gone"
-        android:hint="Auto update min max values"
-        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/percentageText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Percentage:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.154" />
 
     <ProgressBar
         android:layout_width="match_parent"

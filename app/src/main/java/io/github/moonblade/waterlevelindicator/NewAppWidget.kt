@@ -45,17 +45,17 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val minValue = sharedPref.getInt("minValue", 0)
     val maxValue = sharedPref.getInt("maxValue", 100)
     val autoUpdate = sharedPref.getBoolean("autoUpdate", true)
-    Log.d("waterLevel", "Updating app widget")
+//    Log.d("waterLevel", "Updating app widget")
 
     reference.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             // This method is called once with the initial value and again
             // whenever data at this location is updated.
             val value = dataSnapshot.getValue<HashMap<String, Long>>()
-            Log.d("waterLevel", "Value is: $value")
+//            Log.d("waterLevel", "Value is: $value")
             val measurement = value?.get("measurement")
             val percentage = 100 - ((measurement?.toInt()!! - minValue) * 100 )/ (maxValue - minValue)
-            Log.d("waterLevel", "Setting measurement percentage $percentage")
+//            Log.d("waterLevel", "Setting measurement percentage $percentage")
             views.setProgressBar(R.id.measurement, 100, percentage, false)
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -63,7 +63,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
         override fun onCancelled(error: DatabaseError) {
             // Failed to read value
-            Log.w("waterLevel", "Failed to read value.", error.toException())
+//            Log.w("waterLevel", "Failed to read value.", error.toException())
         }
     })
 
