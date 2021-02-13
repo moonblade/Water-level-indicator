@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "997534152135",
+    "firebase_url": "https://water-level-indicator-a555e-default-rtdb.firebaseio.com",
+    "project_id": "water-level-indicator-a555e",
+    "storage_bucket": "water-level-indicator-a555e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997534152135:android:f4299e3b9fe51bc4cad5e2",
+        "android_client_info": {
+          "package_name": "io.github.moonblade.waterlevelindicator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997534152135-9obtp5q3h951tjcffil6pg5f4p92k36o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPt7Kp1vDujf9OlXgkzyBSDm0WS2H41dE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997534152135-9obtp5q3h951tjcffil6pg5f4p92k36o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
