@@ -11,3 +11,12 @@ Android app, takes data from this db, and calculates current percentage based on
 
 ![settings](https://user-images.githubusercontent.com/9362269/110064203-ad3bb280-7d92-11eb-8fe8-b40cc28b06be.jpg)
 
+## Arduino code
+
+### WaterLevelIndicator
+
+Take data from firebase rtdb and display it on an 8x8 LED matrix based on value of printMode.
+
+### WaterLevelSensor
+
+Get distance to water level and upload it to firebase rtdb.
