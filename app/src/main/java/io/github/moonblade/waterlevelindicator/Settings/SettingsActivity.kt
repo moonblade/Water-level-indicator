@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SeekBar
 import androidx.appcompat.widget.SwitchCompat
 import io.github.moonblade.waterlevelindicator.R
 
@@ -15,6 +16,8 @@ class SettingsActivity : AppCompatActivity() {
     private var anomalyDistance: EditText? = null
     private var maxVal: EditText? = null
     private var minVal: EditText? = null
+    private var usePercent: SwitchCompat? = null;
+    private var brightnessSlider: SeekBar?= null;
     private var save: Button? = null
     private lateinit var settings: Settings
 
@@ -65,6 +68,21 @@ class SettingsActivity : AppCompatActivity() {
             settings.autoUpdateMinMax = isChecked
         }
 
+        brightnessSlider?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                settings.brightness = p1
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+            }
+        })
+
+        usePercent?.setOnCheckedChangeListener { _, isChecked ->
+            settings.usePercentDisplay = isChecked
+        }
         save?.setOnClickListener {
             settings.pushValues()
         }
@@ -76,6 +94,8 @@ class SettingsActivity : AppCompatActivity() {
         anomalyDistance = findViewById<EditText>(R.id.anomalyDistance)
         autoUpdate = findViewById<SwitchCompat>(R.id.autoUpdateToggle)
         save = findViewById<Button>(R.id.save)
+        usePercent = findViewById<SwitchCompat>(R.id.usePercent)
+        brightnessSlider = findViewById<SeekBar>(R.id.brightnessSlider)
     }
 
     private fun initialise() {
@@ -90,6 +110,14 @@ class SettingsActivity : AppCompatActivity() {
             maxVal?.setText(settings.maximumValue.toString())
         if (anomalyDistance?.text.toString() != settings.anomalyDistanceLimit.toString())
             anomalyDistance?.setText(settings.anomalyDistanceLimit.toString())
+        if (brightnessSlider?.progress != settings.brightness)
+            brightnessSlider?.progress = settings.brightness
         autoUpdate?.isChecked = settings.autoUpdateMinMax
+        usePercent?.isChecked = settings.usePercentDisplay
+
     }
+}
+
+private fun SeekBar?.setOnSeekBarChangeListener() {
+    TODO("Not yet implemented")
 }

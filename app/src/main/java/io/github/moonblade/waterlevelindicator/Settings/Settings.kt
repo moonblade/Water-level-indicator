@@ -14,6 +14,8 @@ class Settings {
     var minimumValue = -1
     var maximumValue = -1
     var autoUpdateMinMax = true
+    var brightness = 8;
+    var usePercentDisplay = true;
 
     fun updateFields(hashMap: HashMap<String, Int>) {
         Log.d("Settings", "Updating settings: $hashMap")
@@ -36,6 +38,16 @@ class Settings {
         val _anomalyDistanceLimit = hashMap?.get("anomalyDistanceLimit")
         if (_anomalyDistanceLimit != null && _anomalyDistanceLimit != anomalyDistanceLimit) {
             anomalyDistanceLimit = _anomalyDistanceLimit
+        }
+
+        val _brightness = hashMap?.get("brightness")
+        if (_brightness != null && _brightness != brightness) {
+            brightness = _brightness
+        }
+
+        val _usePercentDisplay = hashMap?.get("printMode")
+        if (_usePercentDisplay != null && (_usePercentDisplay > 0) != usePercentDisplay) {
+            usePercentDisplay = (_usePercentDisplay > 0)
         }
 
         if (listener != null) {
@@ -76,6 +88,8 @@ class Settings {
 
     fun pushValues() {
         DataBase.instance()?.updateSettingInt("autoUpdateMinMax", if(autoUpdateMinMax) 1 else 0)
+        DataBase.instance()?.updateSettingInt("printMode", if(usePercentDisplay) 1 else 0)
+        DataBase.instance()?.updateSettingInt("brightness", brightness)
         DataBase.instance()?.updateSettingInt("maximumValue", maximumValue)
         DataBase.instance()?.updateSettingInt("minimumValue", minimumValue)
         DataBase.instance()?.updateSettingInt("anomalyDistanceLimit", anomalyDistanceLimit)
