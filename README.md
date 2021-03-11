@@ -9,13 +9,16 @@ Android app, takes data from this db, and calculates current percentage based on
 
 ![main](https://user-images.githubusercontent.com/9362269/110064173-9b5a0f80-7d92-11eb-9c23-230dae3abe87.jpg)
 
-![settings](https://user-images.githubusercontent.com/9362269/110064203-ad3bb280-7d92-11eb-8fe8-b40cc28b06be.jpg)
+![Screenshot_20210311-172932](https://user-images.githubusercontent.com/9362269/110785179-a4664780-8290-11eb-9458-9b5070759e48.jpg)
 
 ## Arduino code
 
 ### WaterLevelIndicator
 
 Take data from firebase rtdb and display it on an 8x8 LED matrix based on value of printMode.
+
+![IMG_20210311_173010](https://user-images.githubusercontent.com/9362269/110785062-7ed93e00-8290-11eb-8830-0068260a9fc1.jpg)
+![IMG_20210311_172954](https://user-images.githubusercontent.com/9362269/110785068-83055b80-8290-11eb-8b11-7795970e5736.jpg)
 
 ### WaterLevelSensor
 
