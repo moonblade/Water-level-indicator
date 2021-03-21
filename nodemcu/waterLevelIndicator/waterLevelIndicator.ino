@@ -4,8 +4,8 @@
 
 #define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  //Change to your Firebase RTDB project ID e.g. Your_Project_ID.firebaseio.com
 #define FIREBASE_AUTH "RSycUEGVNj1wiOVGrmXjQkdpE65voJNJmaGPs3Z7" //Change to your Firebase RTDB secret password
-#define WIFI_SSID "Arishumood_2"
-#define WIFI_PASSWORD "commvault!12"
+#define WIFI_SSID "Sarayi_ff_24"
+#define WIFI_PASSWORD "abduljabbar"
 
 #define DIN D5
 #define CS D6
