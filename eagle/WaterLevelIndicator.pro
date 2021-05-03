@@ -2,24 +2,24 @@ EAGLE AutoRouter Statistics:
 
 Job           : /Users/moonblade/workspace/apk/WaterLevelIndicator2/eagle/WaterLevelIndicator.brd
 
-Start at      : 14:16:31 (03/05/21)
-End at        : 14:16:48 (03/05/21)
-Elapsed time  : 00:00:12
+Start at      : 15:49:19 (03/05/21)
+End at        : 15:49:50 (03/05/21)
+Elapsed time  : 00:00:02
 
-Signals       :    24   RoutingGrid: 12.5 mil  Layers: 1
+Signals       :    24   RoutingGrid: 25 mil  Layers: 1
 Connections   :    29   predefined:  0 ( 0 Vias )
 
-Router memory :   122760
+Router memory :   32436
 
 Passname          :     Route Optimize1 Optimize2 Optimize3 Optimize4
 
-Time per pass     :  00:00:11  00:00:01  00:00:00  00:00:00  00:00:00
-Number of Ripups  :       720         0         0         0         0
-max. Level        :         6         0         0         0         0
-max. Total        :        12         0         0         0         0
+Time per pass     :  00:00:02  00:00:00  00:00:00  00:00:00  00:00:00
+Number of Ripups  :       454         0         0         0         0
+max. Level        :         5         0         0         0         0
+max. Total        :        15         0         0         0         0
 
-Routed            :        22        22        22        22        22
+Routed            :        25        25        26        26        26
 Vias              :         0         0         0         0         0
-Resolution        :    75.9 %    75.9 %    75.9 %    75.9 %    75.9 %
+Resolution        :    86.2 %    86.2 %    89.7 %    89.7 %    89.7 %
 
-Final             : 75.9% finished
+Final             : 89.7% finished
