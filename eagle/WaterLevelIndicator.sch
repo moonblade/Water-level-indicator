@@ -13597,23 +13597,9 @@ type RDH, grid 15 mm</description>
 <wire x1="2.54" y1="-10.16" x2="2.54" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="U$1" gate="G$1" pin="3V3"/>
-<wire x1="43.18" y1="38.1" x2="30.48" y2="38.1" width="0.1524" layer="91"/>
-<wire x1="30.48" y1="38.1" x2="30.48" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="30.48" y1="10.16" x2="88.9" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="10.16" x2="88.9" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="33.02" x2="142.24" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="142.24" y1="33.02" x2="142.24" y2="-27.94" width="0.1524" layer="91"/>
-<wire x1="142.24" y1="-27.94" x2="165.1" y2="-27.94" width="0.1524" layer="91"/>
-<wire x1="165.1" y1="-27.94" x2="165.1" y2="-24.13" width="0.1524" layer="91"/>
-<wire x1="165.1" y1="-24.13" x2="176.53" y2="-24.13" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$4" class="0">
 <segment>
-<wire x1="33.02" y1="43.18" x2="33.02" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="71.12" x2="33.02" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="81.28" x2="101.6" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="81.28" x2="101.6" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="55.88" x2="109.22" y2="55.88" width="0.1524" layer="91"/>
@@ -13622,8 +13608,12 @@ type RDH, grid 15 mm</description>
 <wire x1="175.26" y1="43.18" x2="175.26" y2="-3.81" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="DIN"/>
 <wire x1="175.26" y1="-3.81" x2="187.96" y2="-3.81" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="D7"/>
-<wire x1="33.02" y1="43.18" x2="43.18" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="43.18" x2="81.28" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="71.12" x2="33.02" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="43.18" x2="33.02" y2="71.12" width="0.1524" layer="91"/>
+<junction x="33.02" y="71.12"/>
+<pinref part="U$1" gate="G$1" pin="D4"/>
+<wire x1="81.28" y1="43.18" x2="78.74" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -13819,6 +13809,15 @@ type RDH, grid 15 mm</description>
 <wire x1="163.83" y1="-38.1" x2="163.83" y2="-26.67" width="0.1524" layer="91"/>
 <junction x="163.83" y="-38.1"/>
 <pinref part="C2" gate="G$1" pin="+"/>
+<wire x1="30.48" y1="38.1" x2="30.48" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="30.48" y1="10.16" x2="88.9" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="10.16" x2="88.9" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="33.02" x2="142.24" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="33.02" x2="142.24" y2="-24.13" width="0.1524" layer="91"/>
+<wire x1="176.53" y1="-24.13" x2="142.24" y2="-24.13" width="0.1524" layer="91"/>
+<junction x="176.53" y="-24.13"/>
+<pinref part="U$1" gate="G$1" pin="3V3"/>
+<wire x1="30.48" y1="38.1" x2="43.18" y2="38.1" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
