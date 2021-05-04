@@ -13613,7 +13613,7 @@ type RDH, grid 15 mm</description>
 </net>
 <net name="N$4" class="0">
 <segment>
-<wire x1="33.02" y1="48.26" x2="33.02" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="43.18" x2="33.02" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="81.28" x2="101.6" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="81.28" x2="101.6" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="55.88" x2="109.22" y2="55.88" width="0.1524" layer="91"/>
@@ -13622,8 +13622,8 @@ type RDH, grid 15 mm</description>
 <wire x1="175.26" y1="43.18" x2="175.26" y2="-3.81" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="DIN"/>
 <wire x1="175.26" y1="-3.81" x2="187.96" y2="-3.81" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="D5"/>
-<wire x1="33.02" y1="48.26" x2="43.18" y2="48.26" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="D7"/>
+<wire x1="33.02" y1="43.18" x2="43.18" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -13641,14 +13641,16 @@ type RDH, grid 15 mm</description>
 </net>
 <net name="N$6" class="0">
 <segment>
-<wire x1="17.78" y1="43.18" x2="17.78" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="43.18" x2="17.78" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="17.78" y1="48.26" x2="17.78" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="17.78" y1="86.36" x2="109.22" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="86.36" x2="109.22" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="66.04" x2="187.96" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="CLK"/>
 <wire x1="187.96" y1="66.04" x2="187.96" y2="6.35" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="D7"/>
-<wire x1="17.78" y1="43.18" x2="43.18" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="U$1" gate="G$1" pin="D5"/>
+<wire x1="43.18" y1="48.26" x2="17.78" y2="48.26" width="0.1524" layer="91"/>
+<junction x="17.78" y="48.26"/>
 </segment>
 </net>
 <net name="N$7" class="0">

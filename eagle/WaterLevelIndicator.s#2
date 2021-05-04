@@ -13821,6 +13821,9 @@ type RDH, grid 15 mm</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="204,1,43.18,38.1,U$1,3V3,,,,"/>
+</errors>
 </schematic>
 </drawing>
 </eagle>
