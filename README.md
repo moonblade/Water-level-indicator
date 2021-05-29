@@ -6,6 +6,8 @@ Android app, takes data from this db, and calculates current percentage based on
 
 The app widget didn't really function as I wanted it to, so took a second nodemcu and created a water level indicator that takes data from firebase rtdb and displays it on an led matrix.
 
+As an experiment in 3d printing and pcb printing, added eagle board schematic to print the water level indicator on pcb. Will end up removing the indicator and wire it up to relays to auto control the motor when water level is low.
+
 ## Arduino code
 
 ### WaterLevelIndicator
