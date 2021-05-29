@@ -4,12 +4,7 @@ A nodemcu tied to an ultrasonic sensor detects the distance to the water level a
 
 Android app, takes data from this db, and calculates current percentage based on min and max values it can have. Outlier values are discarded.
 
-
-## screenshots
-
-![main](https://user-images.githubusercontent.com/9362269/110064173-9b5a0f80-7d92-11eb-9c23-230dae3abe87.jpg)
-
-![Screenshot_20210311-172932](https://user-images.githubusercontent.com/9362269/110785179-a4664780-8290-11eb-9458-9b5070759e48.jpg)
+The app widget didn't really function as I wanted it to, so took a second nodemcu and created a water level indicator that takes data from firebase rtdb and displays it on an led matrix.
 
 ## Arduino code
 
@@ -18,8 +13,20 @@ Android app, takes data from this db, and calculates current percentage based on
 Take data from firebase rtdb and display it on an 8x8 LED matrix based on value of printMode.
 
 ![IMG_20210311_173010](https://user-images.githubusercontent.com/9362269/110785062-7ed93e00-8290-11eb-8830-0068260a9fc1.jpg)
+
 ![IMG_20210311_172954](https://user-images.githubusercontent.com/9362269/110785068-83055b80-8290-11eb-8b11-7795970e5736.jpg)
+
+Installed in kitchen
+![image](https://user-images.githubusercontent.com/9362269/120057833-f9318700-c063-11eb-82da-114e88e869ca.png)
+
 
 ### WaterLevelSensor
 
 Get distance to water level and upload it to firebase rtdb.
+
+## App Screenshots
+
+![main](https://user-images.githubusercontent.com/9362269/110064173-9b5a0f80-7d92-11eb-9c23-230dae3abe87.jpg)
+
+![Screenshot_20210311-172932](https://user-images.githubusercontent.com/9362269/110785179-a4664780-8290-11eb-9458-9b5070759e48.jpg)
+
