@@ -26,6 +26,9 @@ Installed in kitchen
 
 Get distance to water level and upload it to firebase rtdb.
 
+Installed on the underside of the water tank lid. Had to do some rewiring of the electrical connections in the roof to provide uninterupted power bypassing a switch.
+![image](https://user-images.githubusercontent.com/9362269/120058157-968dba80-c066-11eb-8d4d-26f66873411d.png)
+
 ## App Screenshots
 
 ![main](https://user-images.githubusercontent.com/9362269/110064173-9b5a0f80-7d92-11eb-9c23-230dae3abe87.jpg)
