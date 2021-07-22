@@ -14,7 +14,6 @@
 
 //Define Firebase Data objects
 FirebaseData fd;
-int measurement, lastMeasurement = 0;
 double timestamp;
 int maxVal, minVal, anomalyDist, printMode, percentage, numrows, brightness;
 int numbers[][3] = {{0x7c, 0x44, 0x7c}, {0, 0, 0x7c}, {0x5c, 0x54, 0x74}, {0x54, 0x54, 0x7c}, {0x70, 0x10, 0x7c}, {0x74, 0x54, 0x5c}, {0x7c, 0x54, 0x5c}, {0x40, 0x40, 0x7c}, {0x7c, 0x54, 0x7c}, {0x74, 0x54, 0x7c}};
@@ -87,15 +86,9 @@ void setup() {
 }
 
 void loop() {
-  Firebase.getInt(fd, "/waterlevel/measurement");
-  measurement = fd.intData();
-  Firebase.getDouble(fd, "/waterlevel/timestamp");
-  timestamp = fd.doubleData();
+  Firebase.getInt(fd, "/waterlevel/percentage");
+  percentage = fd.intData();
 
-  Firebase.getInt(fd, "settings/maximumValue");
-  maxVal = fd.intData();
-  Firebase.getInt(fd, "settings/minimumValue");
-  minVal = fd.intData();
   Firebase.getInt(fd, "settings/printMode");
   printMode = fd.intData();
   Firebase.getInt(fd, "settings/brightness");
@@ -105,15 +98,10 @@ void loop() {
   anomalyDist = fd.intData();
 
   lc.setIntensity(0, brightness);
-  if (lastMeasurement == 0 || abs(measurement - lastMeasurement) < anomalyDist) {
-    percentage = (100 - (((measurement - minVal) * 100) / max((maxVal - minVal), 1)));
-    percentage = max(min(100, percentage), 0);
    
-    lightLED(percentage, printMode);
-    Serial.println(percentage);
-    Serial.println(timestamp);
-    Serial.println(".");
-    lastMeasurement = measurement;
-  }
+  lightLED(percentage, printMode);
+  Serial.println(percentage);
+  Serial.println(timestamp);
+  Serial.println(".");
   delay(10000);
 }
