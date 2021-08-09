@@ -4,7 +4,9 @@
 
 #define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  //Change to your Firebase RTDB project ID e.g. Your_Project_ID.firebaseio.com
 #define FIREBASE_AUTH "RSycUEGVNj1wiOVGrmXjQkdpE65voJNJmaGPs3Z7" //Change to your Firebase RTDB secret password
+/* #define WIFI_SSID "sarayi_2" */
 #define WIFI_SSID "Sarayi_ff_24"
+/* #define WIFI_PASSWORD "code||die" */
 #define WIFI_PASSWORD "abduljabbar"
 
 #define DIN D5
@@ -14,8 +16,8 @@
 
 //Define Firebase Data objects
 FirebaseData fd;
-double timestamp;
-int maxVal, minVal, anomalyDist, printMode, percentage, numrows, brightness;
+double timestamp, lastMeasurement, lastPercentage;
+int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins;
 int numbers[][3] = {{0x7c, 0x44, 0x7c}, {0, 0, 0x7c}, {0x5c, 0x54, 0x74}, {0x54, 0x54, 0x7c}, {0x70, 0x10, 0x7c}, {0x74, 0x54, 0x5c}, {0x7c, 0x54, 0x5c}, {0x40, 0x40, 0x7c}, {0x7c, 0x54, 0x7c}, {0x74, 0x54, 0x7c}};
 int revNumbers[][3] = {{0x3e, 0x22, 0x3e}, {0x0, 0x0, 0x3e}, {0x3a, 0x2a, 0x2e}, {0x2a, 0x2a, 0x3e}, {0xe, 0x8, 0x3e}, {0x2e, 0x2a, 0x3a}, {0x3e, 0x2a, 0x3a}, {0x2, 0x2, 0x3e}, {0x3e, 0x2a, 0x3e}, {0x2e, 0x2a, 0x3e}};
 
@@ -85,18 +87,43 @@ void setup() {
   Firebase.reconnectWiFi(true);
 }
 
+int calculateNormalPercentage() {
+    Firebase.getInt(fd, "/waterlevel/measurement");
+    measurement = fd.intData();
+    Firebase.getInt(fd, "settings/maximumValue");
+    maxVal = fd.intData();
+    Firebase.getInt(fd, "settings/minimumValue");
+    minVal = fd.intData();
+
+    int percent = (100 - (((measurement - minVal) * 100) / max((maxVal - minVal), 1)));
+    percent = max(min(100, percentage), 0);
+    return percent;
+}
+
 void loop() {
   Firebase.getInt(fd, "/waterlevel/percentage");
   percentage = fd.intData();
+
+  Firebase.getDouble(fd, "/waterlevel/timestamp");
+  lastMeasurement = fd.doubleData();
+
+  Firebase.getDouble(fd, "/waterlevel/percentageUpdatedAt");
+  lastPercentage = fd.doubleData();
+
+
+  Firebase.getInt(fd, "/settings/switchToDirectModeAfterMins");
+  switchToDirectModeAfterMins = fd.intData();
+
+  if (lastMeasurement - lastPercentage > switchToDirectModeAfterMins * 60 * 1000) {
+    Serial.println("Direct mode");
+    percentage = calculateNormalPercentage();
+  }
 
   Firebase.getInt(fd, "settings/printMode");
   printMode = fd.intData();
   Firebase.getInt(fd, "settings/brightness");
   brightness = fd.intData();
     
-  Firebase.getInt(fd, "settings/anomalyDistanceLimit");
-  anomalyDist = fd.intData();
-
   lc.setIntensity(0, brightness);
    
   lightLED(percentage, printMode);
