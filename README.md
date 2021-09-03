@@ -10,7 +10,7 @@ As an experiment in 3d printing and pcb printing, added eagle board schematic to
 
 ### Update 2021-09-01 
 
-The water level sensor was connected to the lid of hte water tank by threading it through the lid. The thread broke and the full box took a dip in the water.
+The water level sensor was connected to the lid of hte water tank by threading it through the lid. The thread broke and the full box took a dip in the water and fried the electronics.
 Till then it was getting a ton of water droplets on it due to evaporation as well. So the board looks really gnarly due to that.
 
 For the updated version, will be using waterproof ultrasonic sensor and the ic will be kept seperate and not inside the lid anymore.
