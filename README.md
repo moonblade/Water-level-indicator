@@ -8,6 +8,15 @@ The app widget didn't really function as I wanted it to, so took a second nodemc
 
 As an experiment in 3d printing and pcb printing, added eagle board schematic to print the water level indicator on pcb. Will end up removing the indicator and wire it up to relays to auto control the motor when water level is low.
 
+### Update 2021-09-01 
+
+The water level sensor was connected to the lid of hte water tank by threading it through the lid. The thread broke and the full box took a dip in the water.
+Till then it was getting a ton of water droplets on it due to evaporation as well. So the board looks really gnarly due to that.
+
+For the updated version, will be using waterproof ultrasonic sensor and the ic will be kept seperate and not inside the lid anymore.
+
+![image](https://user-images.githubusercontent.com/9362269/132033304-b6c784d4-07c3-428f-9286-d6dd2637c560.png)
+
 ## Arduino code
 
 ### WaterLevelIndicator
@@ -34,4 +43,5 @@ Installed on the underside of the water tank lid. Had to do some rewiring of the
 ![main](https://user-images.githubusercontent.com/9362269/110064173-9b5a0f80-7d92-11eb-9c23-230dae3abe87.jpg)
 
 ![Screenshot_20210311-172932](https://user-images.githubusercontent.com/9362269/110785179-a4664780-8290-11eb-9458-9b5070759e48.jpg)
+
 
