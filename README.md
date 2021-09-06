@@ -8,6 +8,23 @@ The app widget didn't really function as I wanted it to, so took a second nodemc
 
 As an experiment in 3d printing and pcb printing, added eagle board schematic to print the water level indicator on pcb. Will end up removing the indicator and wire it up to relays to auto control the motor when water level is low.
 
+### Update 2021-09-05
+
+Bought a waterproof ultrasonic sensor, but the version supplied by the manufactorer seems to have some faults. One the minimum distance is too high and two it was giving random readings and not accurate ones. Which makes it unusable for this project. So ended up buying a new normal ultrasonic sensor and gave the waterproof one for return. But to learn previous lessons, figured would keep the sensor on top of the lid this time around so that corrosion doesn't play that big a role and it would be impossible for it to fall into water.
+
+To that end, drilled a couple of holes in the lid of the water tank and stuck the sensor through it covering most of it with insulation tape. Also overhauled the microchip so that its easily replacable and works directly off of ac power doing its own coversion instead of relying on a phone charger.
+
+Old vs new
+![image](https://user-images.githubusercontent.com/9362269/132161640-8e9af23f-c296-4ebe-bd39-4643f38173a5.png)
+
+
+Underside of lid
+![image](https://user-images.githubusercontent.com/9362269/132161556-d9242ffb-65bf-441a-befc-98c5a41b7320.png)
+
+Topside connected up
+![image](https://user-images.githubusercontent.com/9362269/132161731-35425384-af4b-4f77-8e5a-77ded42fbf48.png)
+
+
 ### Update 2021-09-01 
 
 The water level sensor was connected to the lid of hte water tank by threading it through the lid. The thread broke and the full box took a dip in the water and fried the electronics.
