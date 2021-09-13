@@ -17,7 +17,7 @@
 //Define Firebase Data objects
 FirebaseData fd;
 double timestamp, lastMeasurement, lastPercentage;
-int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins;
+int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins, percent;
 int numbers[][3] = {{0x7c, 0x44, 0x7c}, {0, 0, 0x7c}, {0x5c, 0x54, 0x74}, {0x54, 0x54, 0x7c}, {0x70, 0x10, 0x7c}, {0x74, 0x54, 0x5c}, {0x7c, 0x54, 0x5c}, {0x40, 0x40, 0x7c}, {0x7c, 0x54, 0x7c}, {0x74, 0x54, 0x7c}};
 int revNumbers[][3] = {{0x3e, 0x22, 0x3e}, {0x0, 0x0, 0x3e}, {0x3a, 0x2a, 0x2e}, {0x2a, 0x2a, 0x3e}, {0xe, 0x8, 0x3e}, {0x2e, 0x2a, 0x3a}, {0x3e, 0x2a, 0x3a}, {0x2, 0x2, 0x3e}, {0x3e, 0x2a, 0x3e}, {0x2e, 0x2a, 0x3e}};
 
@@ -95,8 +95,7 @@ int calculateNormalPercentage() {
     Firebase.getInt(fd, "settings/minimumValue");
     minVal = fd.intData();
 
-    int percent = (100 - (((measurement - minVal) * 100) / max((maxVal - minVal), 1)));
-    percent = max(min(100, percentage), 0);
+    percent = max(min(100, (100 - (((measurement - minVal) * 100) / max((maxVal - minVal), 1)))), 0);
     return percent;
 }
 
@@ -117,6 +116,7 @@ void loop() {
   if (lastMeasurement - lastPercentage > switchToDirectModeAfterMins * 60 * 1000) {
     Serial.println("Direct mode");
     percentage = calculateNormalPercentage();
+    Serial.println(percentage);
   }
 
   Firebase.getInt(fd, "settings/printMode");
