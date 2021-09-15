@@ -1,22 +1,26 @@
 #include "FirebaseESP8266.h"
 #include <ESP8266WiFi.h>
 #include <LedControl.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
 
 #define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  //Change to your Firebase RTDB project ID e.g. Your_Project_ID.firebaseio.com
 #define FIREBASE_AUTH "RSycUEGVNj1wiOVGrmXjQkdpE65voJNJmaGPs3Z7" //Change to your Firebase RTDB secret password
-/* #define WIFI_SSID "sarayi_2" */
-#define WIFI_SSID "Sarayi_ff_24"
-/* #define WIFI_PASSWORD "code||die" */
-#define WIFI_PASSWORD "abduljabbar"
+/* #define WIFI_SSID "Sarayi_ff_24" */
+/* #define WIFI_PASSWORD "abduljabbar" */
+#define WIFI_SSID "sarayi_2"
+#define WIFI_PASSWORD "code||die"
 
 #define DIN D5
 #define CS D6
 #define CLK D7
 
+const String CURRENT_VERSION = String("__BINARY_NAME:waterLevelIndicator__BINARY_VERSION:") + __DATE__ + __TIME__ + "__";
 
 //Define Firebase Data objects
 FirebaseData fd;
 double timestamp, lastMeasurement, lastPercentage;
+String latestVersion, downloadUrl;
 int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins, percent;
 int numbers[][3] = {{0x7c, 0x44, 0x7c}, {0, 0, 0x7c}, {0x5c, 0x54, 0x74}, {0x54, 0x54, 0x7c}, {0x70, 0x10, 0x7c}, {0x74, 0x54, 0x5c}, {0x7c, 0x54, 0x5c}, {0x40, 0x40, 0x7c}, {0x7c, 0x54, 0x7c}, {0x74, 0x54, 0x7c}};
 int revNumbers[][3] = {{0x3e, 0x22, 0x3e}, {0x0, 0x0, 0x3e}, {0x3a, 0x2a, 0x2e}, {0x2a, 0x2a, 0x3e}, {0xe, 0x8, 0x3e}, {0x2e, 0x2a, 0x3a}, {0x3e, 0x2a, 0x3a}, {0x2, 0x2, 0x3e}, {0x3e, 0x2a, 0x3e}, {0x2e, 0x2a, 0x3e}};
@@ -66,6 +70,35 @@ void lightLED(int percent, int printMode) {
   }
 }
 
+void updateFirmware(String firmwareUrl) {
+  WiFiClientSecure client;
+  client.setInsecure();
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, firmwareUrl); 
+  switch(ret) {
+      case HTTP_UPDATE_FAILED:
+          Serial.println("[update] Update failed.");
+          break;
+      case HTTP_UPDATE_NO_UPDATES:
+          Serial.println("[update] Update no Update.");
+          break;
+      case HTTP_UPDATE_OK:
+          Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
+          break;
+    }
+  }
+
+void checkForUpdates() {
+  Firebase.getString(fd, "/waterLevelIndicator/firmware/binaryVersion");
+  latestVersion = fd.stringData();
+
+  if (!latestVersion.equalsIgnoreCase(CURRENT_VERSION)) {
+    Serial.println("Version mismatch, downloading update");
+    Firebase.getString(fd, "/waterLevelIndicator/firmware/downloadUrl");
+    downloadUrl = fd.stringData();
+    updateFirmware(downloadUrl);
+  }
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -100,6 +133,7 @@ int calculateNormalPercentage() {
 }
 
 void loop() {
+  checkForUpdates();
   Firebase.getInt(fd, "/waterlevel/percentage");
   percentage = fd.intData();
 
