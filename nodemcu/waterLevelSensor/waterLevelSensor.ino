@@ -17,7 +17,9 @@
 #define TRIGGERPIN D1
 #define ECHOPIN    D2
 #define GND D3
-#define ARRAY_SIZE 10
+#define UPDATE_INTERVAL 10000
+#define ARRAY_SIZE 20
+#define ROUND_UPTO 5
 
 // For auto updater
 const String CURRENT_VERSION = String("__BINARY_NAME:waterLevelSensor__BINARY_VERSION:") + __DATE__ + __TIME__ + "__";
@@ -52,21 +54,56 @@ int calculatePercentage(int distance) {
     return max(min(100, (100 - (((distance - minimumDistanceCm) * 100) / max((maximumDistanceCm - minimumDistanceCm), 1)))), 0);
 }
 
-int getPercentage() {
-  for (int i=0; i<ARRAY_SIZE; ++i) {
-    distances[i] = getDistance();
-    delay(1000);
+// qsort requires you to create a sort function
+int sort_desc(const void *cmp1, const void *cmp2)
+{
+  int a = *((int *)cmp1);
+  int b = *((int *)cmp2);
+  return b - a;
+}
+
+int findMode() {
+  qsort(distances, ARRAY_SIZE, sizeof(distances[0]), sort_desc);
+  int number = distances[0];
+  int mode = number;
+  int count = 1;
+  int countMode = 1;
+  
+  for (int i=1; i<ARRAY_SIZE; i++)
+  {
+    if (distances[i] == number) { 
+       ++count;
+    }
+    else { // now this is a different number
+      if (count > countMode) {
+            countMode = count; // mode is the biggest ocurrences
+            mode = number;
+      }
+      count = 1; // reset count for the new number
+      number = distances[i];
+    }
   }
-  int sum = 0;
+  return mode;
+}
+
+int getPercentage() {
   String distanceString = String("");
   for (int i=0; i<ARRAY_SIZE; ++i) {
-    sum += distances[i];
+    distances[i] = getDistance();
     distanceString += String(distances[i]) + " ";
+    int remainder = distances[i] % ROUND_UPTO;
+    if (remainder > 0) {
+      distances[i] += ROUND_UPTO - remainder;
+    }
+    delay(UPDATE_INTERVAL / ARRAY_SIZE);
   }
-
   Firebase.set(fd, BASE + "/output/rawDistances", distanceString);
-  int averageDistance = sum / ARRAY_SIZE;
-  int percentage = calculatePercentage(averageDistance);
+
+  // Find mode of the data
+  int finalDistance = findMode();
+  Firebase.set(fd, BASE + "/output/calculatedDistance", finalDistance);
+
+  int percentage = calculatePercentage(finalDistance);
   return percentage;
 }
 
