@@ -1,28 +1,34 @@
-#include "FirebaseESP8266.h"
+// Libraries
+#include <FirebaseESP8266.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 
+// Firebase Auth
+#define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  
+#define FIREBASE_AUTH "RSycUEGVNj1wiOVGrmXjQkdpE65voJNJmaGPs3Z7" 
 
-#define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  //Change to your Firebase RTDB project ID e.g. Your_Project_ID.firebaseio.com
-#define FIREBASE_AUTH "RSycUEGVNj1wiOVGrmXjQkdpE65voJNJmaGPs3Z7" //Change to your Firebase RTDB secret password
+// Wifi details
 #define WIFI_SSID "sarayi_tf_2.4"
 #define WIFI_PASSWORD "code||die"
+
+// Defaults for operation
 #define VCC D0
 #define TRIGGERPIN D1
 #define ECHOPIN    D2
 #define GND D3
+#define ARRAY_SIZE 10
 
+// For auto updater
 const String CURRENT_VERSION = String("__BINARY_NAME:waterLevelSensor__BINARY_VERSION:") + __DATE__ + __TIME__ + "__";
+const String BASE = String("/waterLevelSensor");
 String latestVersion, downloadUrl;
 
-//Define Firebase Data objects
-FirebaseData waterLevelData;
-
-const String path = "/waterlevel";
+FirebaseData fd;
 
 int extraDelay = 0;
 long distance = 0, duration;
+int distances[ARRAY_SIZE];
 
 int getDistance() {
   digitalWrite(TRIGGERPIN, LOW);  
@@ -32,14 +38,39 @@ int getDistance() {
   digitalWrite(TRIGGERPIN, LOW);
 
   duration = pulseIn(ECHOPIN, HIGH);
-  Serial.println(duration);
   distance = duration*0.034/2;
   Serial.println(distance);
   return distance;
 }
 
+int calculatePercentage(int distance) {
+    Firebase.getInt(fd, BASE + "/configuration/maximumDistanceCm");
+    int maximumDistanceCm = fd.intData();
+    Firebase.getInt(fd, BASE + "/configuration/minimumDistanceCm");
+    int minimumDistanceCm = fd.intData();
+
+    return max(min(100, (100 - (((distance - minimumDistanceCm) * 100) / max((maximumDistanceCm - minimumDistanceCm), 1)))), 0);
+}
+
+int getPercentage() {
+  for (int i=0; i<ARRAY_SIZE; ++i) {
+    distances[i] = getDistance();
+    delay(1000);
+  }
+  int sum = 0;
+  String distanceString = String("");
+  for (int i=0; i<ARRAY_SIZE; ++i) {
+    sum += distances[i];
+    distanceString += String(distances[i]) + " ";
+  }
+
+  Firebase.set(fd, BASE + "/output/rawDistances", distanceString);
+  int averageDistance = sum / ARRAY_SIZE;
+  int percentage = calculatePercentage(averageDistance);
+  return percentage;
+}
+
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(TRIGGERPIN, OUTPUT);
   pinMode(GND, OUTPUT);
@@ -62,29 +93,18 @@ void setup() {
 void updateFirmware(String firmwareUrl) {
   WiFiClientSecure client;
   client.setInsecure();
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, firmwareUrl); 
-  switch(ret) {
-      case HTTP_UPDATE_FAILED:
-          Serial.println("[update] Update failed.");
-          break;
-      case HTTP_UPDATE_NO_UPDATES:
-          Serial.println("[update] Update no Update.");
-          break;
-      case HTTP_UPDATE_OK:
-          Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
-          break;
-    }
-  }
+  ESPhttpUpdate.update(client, firmwareUrl); 
+}
 
 void checkForUpdates() {
-  Firebase.set(waterLevelData, "/waterLevelSensor/firmware/currentVersion", CURRENT_VERSION);
-  Firebase.getString(waterLevelData, "/waterLevelSensor/firmware/binaryVersion");
-  latestVersion = waterLevelData.stringData();
+  Firebase.set(fd, BASE + "/firmware/currentVersion", CURRENT_VERSION);
+  Firebase.getString(fd, BASE + "/firmware/binaryVersion");
+  latestVersion = fd.stringData();
 
   if (!latestVersion.equalsIgnoreCase(CURRENT_VERSION)) {
     Serial.println("Version mismatch, downloading update");
-    Firebase.getString(waterLevelData, "/waterLevelSensor/firmware/downloadUrl");
-    downloadUrl = waterLevelData.stringData();
+    Firebase.getString(fd, BASE + "/firmware/downloadUrl");
+    downloadUrl = fd.stringData();
     updateFirmware(downloadUrl);
   }
 }
@@ -92,11 +112,12 @@ void checkForUpdates() {
 void loop() {
   digitalWrite(GND, LOW);
   digitalWrite(VCC, HIGH);
-  int dist = getDistance();
-  int percentage = 0;
+  
+  int percentage = getPercentage();
 
-  Firebase.set(waterLevelData, path + "/measurement", dist);
-  Firebase.setTimestamp(waterLevelData, path + "/timestamp");
+  Firebase.set(fd, BASE + "/output/percentage", percentage);
+  Firebase.setTimestamp(fd, BASE + "/output/timestamp");
+
   checkForUpdates();
-  delay(10000);
+  delay(1000);
 }
