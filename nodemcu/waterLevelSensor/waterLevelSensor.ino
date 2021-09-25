@@ -102,10 +102,19 @@ int getPercentage() {
 }
 
 void setup() {
+  delay(100);
   Serial.begin(9600);
+  Wire.begin(D2, D1);
   pinMode(GND, OUTPUT);
   pinMode(VCC, OUTPUT);
-  Wire.begin(SDA, SCL);
+
+  sensor.setTimeout(500);
+  if (!sensor.init())
+  {
+    Serial.println("Failed to detect and initialize sensor!");
+    while (1) {}
+  }
+  sensor.setMeasurementTimingBudget(200000);
 
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("");
@@ -119,9 +128,6 @@ void setup() {
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   Firebase.reconnectWiFi(true);
 
-  sensor.setTimeout(500);
-  sensor.init();
-  sensor.setMeasurementTimingBudget(200000);
 }
 
 void updateFirmware(String firmwareUrl) {
@@ -153,5 +159,7 @@ void loop() {
   Firebase.setTimestamp(fd, BASE + "/output/timestamp");
 
   /* checkForUpdates(); */
+  if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+  Serial.println();
   delay(1000);
 }
