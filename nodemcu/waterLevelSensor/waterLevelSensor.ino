@@ -1,160 +1,70 @@
-// Libraries
-#include <FirebaseESP8266.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266httpUpdate.h>
+/* This example shows how to get single-shot range
+ measurements from the VL53L0X. The sensor can optionally be
+ configured with different ranging profiles, as described in
+ the VL53L0X API user manual, to get better performance for
+ a certain application. This code is based on the four
+ "SingleRanging" examples in the VL53L0X API.
 
-// Firebase Auth
-#define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  
-#define FIREBASE_AUTH "RSycUEGVNj1wiOVGrmXjQkdpE65voJNJmaGPs3Z7" 
+ The range readings are in units of mm. */
 
-// Wifi details
-#define WIFI_SSID "sarayi_tf_2.4"
-#define WIFI_PASSWORD "code||die"
+#include <Wire.h>
+#include <VL53L0X.h>
 
-// Defaults for operation
-#define VCC D0
-#define TRIGGERPIN D1
-#define ECHOPIN    D2
-#define GND D3
-#define UPDATE_INTERVAL 10000
-#define ARRAY_SIZE 20
-#define ROUND_UPTO 5
+VL53L0X sensor;
 
-// For auto updater
-const String CURRENT_VERSION = String("__BINARY_NAME:waterLevelSensor__BINARY_VERSION:") + __DATE__ + __TIME__ + "__";
-const String BASE = String("/waterLevelSensor");
-String latestVersion, downloadUrl;
 
-FirebaseData fd;
+// Uncomment this line to use long range mode. This
+// increases the sensitivity of the sensor and extends its
+// potential range, but increases the likelihood of getting
+// an inaccurate reading because of reflections from objects
+// other than the intended target. It works best in dark
+// conditions.
 
-int extraDelay = 0;
-long distance = 0, duration;
-int distances[ARRAY_SIZE];
+//#define LONG_RANGE
 
-int getDistance() {
-  digitalWrite(TRIGGERPIN, LOW);  
-  delayMicroseconds(5); 
-  digitalWrite(TRIGGERPIN, HIGH);
-  delayMicroseconds(10); 
-  digitalWrite(TRIGGERPIN, LOW);
 
-  duration = pulseIn(ECHOPIN, HIGH);
-  distance = duration*0.034/2;
-  Serial.println(distance);
-  return distance;
-}
+// Uncomment ONE of these two lines to get
+// - higher speed at the cost of lower accuracy OR
+// - higher accuracy at the cost of lower speed
 
-int calculatePercentage(int distance) {
-    Firebase.getInt(fd, BASE + "/configuration/maximumDistanceCm");
-    int maximumDistanceCm = fd.intData();
-    Firebase.getInt(fd, BASE + "/configuration/minimumDistanceCm");
-    int minimumDistanceCm = fd.intData();
+//#define HIGH_SPEED
+#define HIGH_ACCURACY
 
-    return max(min(100, (100 - (((distance - minimumDistanceCm) * 100) / max((maximumDistanceCm - minimumDistanceCm), 1)))), 0);
-}
 
-// qsort requires you to create a sort function
-int sort_desc(const void *cmp1, const void *cmp2)
+void setup()
 {
-  int a = *((int *)cmp1);
-  int b = *((int *)cmp2);
-  return b - a;
-}
-
-int findMode() {
-  qsort(distances, ARRAY_SIZE, sizeof(distances[0]), sort_desc);
-  int number = distances[0];
-  int mode = number;
-  int count = 1;
-  int countMode = 1;
-  
-  for (int i=1; i<ARRAY_SIZE; i++)
-  {
-    if (distances[i] == number) { 
-       ++count;
-    }
-    else { // now this is a different number
-      if (count > countMode) {
-            countMode = count; // mode is the biggest ocurrences
-            mode = number;
-      }
-      count = 1; // reset count for the new number
-      number = distances[i];
-    }
-  }
-  return mode;
-}
-
-int getPercentage() {
-  String distanceString = String("");
-  for (int i=0; i<ARRAY_SIZE; ++i) {
-    distances[i] = getDistance();
-    distanceString += String(distances[i]) + " ";
-    int remainder = distances[i] % ROUND_UPTO;
-    if (remainder > 0) {
-      distances[i] += ROUND_UPTO - remainder;
-    }
-    delay(UPDATE_INTERVAL / ARRAY_SIZE);
-  }
-  Firebase.set(fd, BASE + "/output/rawDistances", distanceString);
-
-  // Find mode of the data
-  int finalDistance = findMode();
-  Firebase.set(fd, BASE + "/output/calculatedDistance", finalDistance);
-
-  int percentage = calculatePercentage(finalDistance);
-  return percentage;
-}
-
-void setup() {
+  delay(100);
   Serial.begin(9600);
-  pinMode(TRIGGERPIN, OUTPUT);
-  pinMode(GND, OUTPUT);
-  pinMode(VCC, OUTPUT);
-  pinMode(ECHOPIN, INPUT);
+  Wire.begin(D2,D1);
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.println("");
-
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
+  sensor.setTimeout(500);
+  if (!sensor.init())
+  {
+    Serial.println("Failed to detect and initialize sensor!");
+    while (1) {}
   }
 
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  Firebase.reconnectWiFi(true);
+#if defined LONG_RANGE
+  // lower the return signal rate limit (default is 0.25 MCPS)
+  sensor.setSignalRateLimit(0.1);
+  // increase laser pulse periods (defaults are 14 and 10 PCLKs)
+  sensor.setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 18);
+  sensor.setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 14);
+#endif
+
+#if defined HIGH_SPEED
+  // reduce timing budget to 20 ms (default is about 33 ms)
+  sensor.setMeasurementTimingBudget(20000);
+#elif defined HIGH_ACCURACY
+  // increase timing budget to 200 ms
+  sensor.setMeasurementTimingBudget(200000);
+#endif
 }
 
-void updateFirmware(String firmwareUrl) {
-  WiFiClientSecure client;
-  client.setInsecure();
-  ESPhttpUpdate.update(client, firmwareUrl); 
-}
+void loop()
+{
+  Serial.print(sensor.readRangeSingleMillimeters());
+  if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
 
-void checkForUpdates() {
-  Firebase.set(fd, BASE + "/firmware/currentVersion", CURRENT_VERSION);
-  Firebase.getString(fd, BASE + "/firmware/binaryVersion");
-  latestVersion = fd.stringData();
-
-  if (!latestVersion.equalsIgnoreCase(CURRENT_VERSION)) {
-    Serial.println("Version mismatch, downloading update");
-    Firebase.getString(fd, BASE + "/firmware/downloadUrl");
-    downloadUrl = fd.stringData();
-    updateFirmware(downloadUrl);
-  }
-}
-
-void loop() {
-  digitalWrite(GND, LOW);
-  digitalWrite(VCC, HIGH);
-  
-  int percentage = getPercentage();
-
-  Firebase.set(fd, BASE + "/output/percentage", percentage);
-  Firebase.setTimestamp(fd, BASE + "/output/timestamp");
-
-  checkForUpdates();
-  delay(1000);
+  Serial.println();
 }
