@@ -27,6 +27,7 @@ FirebaseData fd;
 int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins, percent;
 int rev_numbers[][3] = {{0x7c, 0x44, 0x7c}, {0, 0, 0x7c}, {0x5c, 0x54, 0x74}, {0x54, 0x54, 0x7c}, {0x70, 0x10, 0x7c}, {0x74, 0x54, 0x5c}, {0x7c, 0x54, 0x5c}, {0x40, 0x40, 0x7c}, {0x7c, 0x54, 0x7c}, {0x74, 0x54, 0x7c}};
 int numbers[][3] = {{0x3e, 0x22, 0x3e}, {0x0, 0x0, 0x3e}, {0x3a, 0x2a, 0x2e}, {0x2a, 0x2a, 0x3e}, {0xe, 0x8, 0x3e}, {0x2e, 0x2a, 0x3a}, {0x3e, 0x2a, 0x3a}, {0x2, 0x2, 0x3e}, {0x3e, 0x2a, 0x3e}, {0x2e, 0x2a, 0x3e}};
+int off[] = {0xff, 0x81, 0xb5, 0x91, 0x91, 0xb5, 0x81, 0xff};
 
 LedControl lc= LedControl(DIN, CLK, CS, 0);
 
@@ -54,22 +55,17 @@ void lightLED(int percent) {
   printnumber(tens, true);
 }
 
+void printOff() {
+  for (int i=0; i<8; ++i) {
+    lc.setRow(0, i, off[i]);
+  }
+}
+
 void updateFirmware(String firmwareUrl) {
   WiFiClientSecure client;
   client.setInsecure();
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, firmwareUrl); 
-  switch(ret) {
-      case HTTP_UPDATE_FAILED:
-          Serial.println("[update] Update failed.");
-          break;
-      case HTTP_UPDATE_NO_UPDATES:
-          Serial.println("[update] Update no Update.");
-          break;
-      case HTTP_UPDATE_OK:
-          Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
-          break;
-    }
-  }
+  ESPhttpUpdate.update(client, firmwareUrl); 
+}
 
 void checkForUpdates() {
   Firebase.set(fd, "/waterLevelIndicator/firmware/currentVersion", CURRENT_VERSION);
@@ -113,7 +109,8 @@ void loop() {
   brightness = fd.intData();
   lc.setIntensity(0, brightness);
    
-  lightLED(percentage);
+  /* lightLED(percentage); */
+  printOff();
 
   checkForUpdates();
   delay(10000);
