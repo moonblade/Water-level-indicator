@@ -3,6 +3,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
+#include <Wire.h>
+#include <VL53L0X.h>
 
 // Firebase Auth
 #define FIREBASE_HOST "water-level-indicator-a555e-default-rtdb.firebaseio.com"  
@@ -14,8 +16,8 @@
 
 // Defaults for operation
 #define VCC D0
-#define TRIGGERPIN D1
-#define ECHOPIN    D2
+#define SCL D1
+#define SDA D2
 #define GND D3
 #define UPDATE_INTERVAL 10000
 #define ARRAY_SIZE 20
@@ -27,22 +29,14 @@ const String BASE = String("/waterLevelSensor");
 String latestVersion, downloadUrl;
 
 FirebaseData fd;
+VL53L0X sensor;
 
 int extraDelay = 0;
 long distance = 0, duration;
 int distances[ARRAY_SIZE];
 
 int getDistance() {
-  digitalWrite(TRIGGERPIN, LOW);  
-  delayMicroseconds(5); 
-  digitalWrite(TRIGGERPIN, HIGH);
-  delayMicroseconds(10); 
-  digitalWrite(TRIGGERPIN, LOW);
-
-  duration = pulseIn(ECHOPIN, HIGH);
-  distance = duration*0.034/2;
-  Serial.println(distance);
-  return distance;
+  distance = sensor.readRangeSingleMillimeters();
 }
 
 int calculatePercentage(int distance) {
@@ -109,10 +103,9 @@ int getPercentage() {
 
 void setup() {
   Serial.begin(9600);
-  pinMode(TRIGGERPIN, OUTPUT);
   pinMode(GND, OUTPUT);
   pinMode(VCC, OUTPUT);
-  pinMode(ECHOPIN, INPUT);
+  Wire.begin(SDA, SCL);
 
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("");
@@ -125,6 +118,10 @@ void setup() {
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
   Firebase.reconnectWiFi(true);
+
+  sensor.setTimeout(500);
+  sensor.init();
+  sensor.setMeasurementTimingBudget(200000);
 }
 
 void updateFirmware(String firmwareUrl) {
@@ -155,6 +152,6 @@ void loop() {
   Firebase.set(fd, BASE + "/output/percentage", percentage);
   Firebase.setTimestamp(fd, BASE + "/output/timestamp");
 
-  checkForUpdates();
+  /* checkForUpdates(); */
   delay(1000);
 }
