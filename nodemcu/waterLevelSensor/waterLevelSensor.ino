@@ -15,10 +15,10 @@
 #define WIFI_PASSWORD "code||die"
 
 // Defaults for operation
-#define VCC D0
+#define VCC D3
 #define SCL D1
-#define SDA D2
-#define GND D3
+#define SDA D0
+#define GND D2
 #define UPDATE_INTERVAL 10000
 #define ARRAY_SIZE 20
 #define ROUND_UPTO 5
@@ -104,7 +104,7 @@ int getPercentage() {
 void setup() {
   delay(100);
   Serial.begin(9600);
-  Wire.begin(D2, D1);
+  Wire.begin(SDA, SCL);
   pinMode(GND, OUTPUT);
   pinMode(VCC, OUTPUT);
 
