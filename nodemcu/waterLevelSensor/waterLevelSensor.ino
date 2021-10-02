@@ -16,9 +16,9 @@
 #define VCC D0
 #define TRIGGERPIN D1
 #define ECHOPIN    D2
-#define GND D3
-#define UPDATE_INTERVAL 10000
-#define ARRAY_SIZE 20
+/* #define GND D3 */
+#define UPDATE_INTERVAL 1000
+#define ARRAY_SIZE 1
 #define ROUND_UPTO 5
 
 // For auto updater
@@ -86,10 +86,27 @@ int findMode() {
   return mode;
 }
 
+void setMinMax(int distance) {
+  Firebase.getInt(fd, BASE + "/output/tempMin");
+  int tempMin = fd.intData();
+  if (distance < tempMin) {
+    Firebase.set(fd, BASE + "/output/tempMin", distance);
+  }
+
+  Firebase.getInt(fd, BASE + "/output/tempMax");
+  int tempMax = fd.intData();
+  if (distance > tempMax) {
+    Firebase.set(fd, BASE + "/output/tempMax", distance);
+  }
+}
+
 int getPercentage() {
   String distanceString = String("");
   for (int i=0; i<ARRAY_SIZE; ++i) {
     distances[i] = getDistance();
+    if (i==0) {
+      setMinMax(distances[i]);
+    }
     distanceString += String(distances[i]) + " ";
     int remainder = distances[i] % ROUND_UPTO;
     if (remainder > 0) {
@@ -110,7 +127,7 @@ int getPercentage() {
 void setup() {
   Serial.begin(9600);
   pinMode(TRIGGERPIN, OUTPUT);
-  pinMode(GND, OUTPUT);
+  /* pinMode(GND, OUTPUT); */
   pinMode(VCC, OUTPUT);
   pinMode(ECHOPIN, INPUT);
 
@@ -147,7 +164,7 @@ void checkForUpdates() {
 }
 
 void loop() {
-  digitalWrite(GND, LOW);
+  /* digitalWrite(GND, LOW); */
   digitalWrite(VCC, HIGH);
   
   int percentage = getPercentage();
