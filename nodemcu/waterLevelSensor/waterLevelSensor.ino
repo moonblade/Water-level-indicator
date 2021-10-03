@@ -17,9 +17,9 @@
 #define TRIGGERPIN D1
 #define ECHOPIN    D2
 /* #define GND D3 */
-#define UPDATE_INTERVAL 1000
-#define ARRAY_SIZE 1
-#define ROUND_UPTO 5
+#define UPDATE_INTERVAL 10000
+#define ARRAY_SIZE 10
+#define ROUND_UPTO 4
 
 // For auto updater
 const String CURRENT_VERSION = String("__BINARY_NAME:waterLevelSensor__BINARY_VERSION:") + __DATE__ + __TIME__ + "__";
