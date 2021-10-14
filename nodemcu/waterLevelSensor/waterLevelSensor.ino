@@ -19,7 +19,7 @@
 /* #define GND D3 */
 #define UPDATE_INTERVAL 10000
 #define ARRAY_SIZE 10
-#define ROUND_UPTO 4
+#define ROUND_UPTO 1
 
 // For auto updater
 const String CURRENT_VERSION = String("__BINARY_NAME:waterLevelSensor__BINARY_VERSION:") + __DATE__ + __TIME__ + "__";

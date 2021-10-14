@@ -30,6 +30,11 @@ int numbers[][3] = {{0x3e, 0x22, 0x3e}, {0x0, 0x0, 0x3e}, {0x3a, 0x2a, 0x2e}, {0
 
 LedControl lc= LedControl(DIN, CLK, CS, 0);
 
+void printlns(String statement) {
+  Serial.println(statement);
+  Firebase.set(fd, "/waterLevelIndicator/logs/" + String(millis()), statement);
+}
+
 void printnumber(int digit, int isTens) {
   int startCol = 1;
   if (!isTens) {
@@ -41,6 +46,7 @@ void printnumber(int digit, int isTens) {
 }
 
 void lightLED(int percent) {
+  printlns("ledPercent: " + String(percent));
   if (percent == 100) {
     for (int i=0; i<numrows; ++i) {
       lc.setColumn(0, i, 0xff);
