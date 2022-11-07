@@ -24,7 +24,7 @@ const String BASE = String("/waterLevelIndicator");
 String latestVersion, downloadUrl;
 //Define Firebase Data objects
 FirebaseData fd;
-int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins, percent;
+int maxVal, minVal, anomalyDist, printMode, percentage, measurement, numrows, brightness, switchToDirectModeAfterMins, percent, alwaysOne;
 int rev_numbers[][3] = {{0x7c, 0x44, 0x7c}, {0, 0, 0x7c}, {0x5c, 0x54, 0x74}, {0x54, 0x54, 0x7c}, {0x70, 0x10, 0x7c}, {0x74, 0x54, 0x5c}, {0x7c, 0x54, 0x5c}, {0x40, 0x40, 0x7c}, {0x7c, 0x54, 0x7c}, {0x74, 0x54, 0x7c}};
 int numbers[][3] = {{0x3e, 0x22, 0x3e}, {0x0, 0x0, 0x3e}, {0x3a, 0x2a, 0x2e}, {0x2a, 0x2a, 0x3e}, {0xe, 0x8, 0x3e}, {0x2e, 0x2a, 0x3a}, {0x3e, 0x2a, 0x3a}, {0x2, 0x2, 0x3e}, {0x3e, 0x2a, 0x3e}, {0x2e, 0x2a, 0x3e}};
 
@@ -32,7 +32,7 @@ LedControl lc= LedControl(DIN, CLK, CS, 0);
 
 void printlns(String statement) {
   Serial.println(statement);
-  Firebase.set(fd, "/waterLevelIndicator/logs/" + String(millis()), statement);
+  /* Firebase.set(fd, "/waterLevelIndicator/logs/" + String(millis()), statement); */
 }
 
 void printnumber(int digit, int isTens) {
@@ -112,14 +112,20 @@ void setup() {
 }
 
 void loop() {
-  Firebase.getInt(fd, "/waterLevelSensor/output/percentage");
-  percentage = fd.intData();
+  Firebase.getInt(fd, BASE + "/configuration/alwaysOne");
+  alwaysOne = fd.intData();
 
-  Firebase.getInt(fd, BASE + "/configuration/brightness");
-  brightness = fd.intData();
-  lc.setIntensity(0, brightness);
-   
-  lightLED(percentage);
+  if (alwaysOne == 1) {
+    Firebase.getInt(fd, "/waterLevelSensor/output/percentage");
+    percentage = fd.intData();
+
+    Firebase.getInt(fd, BASE + "/configuration/brightness");
+    brightness = fd.intData();
+    lc.setIntensity(0, brightness);
+
+     
+    lightLED(percentage);
+  }
 
   checkForUpdates();
   delay(10000);

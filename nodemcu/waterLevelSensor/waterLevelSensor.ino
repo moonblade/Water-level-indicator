@@ -131,6 +131,7 @@ void setup() {
   pinMode(VCC, OUTPUT);
   pinMode(ECHOPIN, INPUT);
 
+  WiFi.hostname("waterlevelsensor");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("");
 
@@ -167,9 +168,10 @@ void loop() {
   /* digitalWrite(GND, LOW); */
   digitalWrite(VCC, HIGH);
   
-  int percentage = getPercentage();
+  /* int percentage = getPercentage(); */
+  int distance = getDistance();
 
-  Firebase.set(fd, BASE + "/output/percentage", percentage);
+  Firebase.set(fd, BASE + "/output/calculatedDistance", distance);
   Firebase.setTimestamp(fd, BASE + "/output/timestamp");
 
   checkForUpdates();
