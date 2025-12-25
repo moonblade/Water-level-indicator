@@ -1,6 +1,6 @@
 # Water level indicator
 
-![https://moonblade.github.io/blog/2021/09/11/over-engineering.html](https://moonblade.github.io/blog/2021/09/11/over-engineering.html)
+[https://moonblade.github.io/blog/2021/09/11/over-engineering.html](https://moonblade.github.io/blog/2021/09/11/over-engineering.html)
 
 A nodemcu tied to an ultrasonic sensor detects the distance to the water level at every ten seconds and uploads it to a firebase realtime db.
 
